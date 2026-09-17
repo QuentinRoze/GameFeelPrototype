@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using static Unity.VisualScripting.Member;
@@ -12,8 +13,8 @@ public class PunchEmitter : MonoBehaviour
     [SerializeField] InputActionReference punchInputRef;
     [SerializeField] TargetsGathering targetsClose;
     [SerializeField] TargetsGathering targetsFar;
-    [SerializeField] CinemachineImpulseSource weakPunchCameraShake;
     [SerializeField] CinemachineImpulseSource strongPunchCameraShake;
+    [SerializeField] CinemachineCamera cinemachineCam;
 
     [Header("Soft References")]
     [SerializeField] Volume juicyPostProcessVolume;
@@ -21,15 +22,10 @@ public class PunchEmitter : MonoBehaviour
     [SerializeField] float juicyPostProcessVolumeOutLerpSpeed;
 
     [Header("Charging State Tweakables")]
-    [SerializeField] float weakPunchChargeTime;
-    [SerializeField] float strongPunchChargeTime;
-
-    [Header("Weak Punch State Tweakables")]
-    [SerializeField] float weakPunchTimeBeforeIdle;
-    [SerializeField] float weakPunchTimeBeforeHit;
-    [SerializeField] Vector3 weakPunchDirection;
-    [SerializeField] float weakPunchForce;
-    [SerializeField] Vector3 weakPunchOffset;
+    [SerializeField] float punchChargeTime;
+    [SerializeField] float punchChargeMaxFOV;
+    [SerializeField] float punchChargeFOVLerpSpeed;
+    [SerializeField] float punchBackToIdleFOVLerpSpeed;
 
     [Header("Strong Punch State Tweakables")]
     [SerializeField] float strongPunchTimeBeforeIdle;
@@ -39,22 +35,24 @@ public class PunchEmitter : MonoBehaviour
     [SerializeField] Vector3 strongPunchOffset;
     [Space]
     [SerializeField] float farTargetsForce;
+    [SerializeField] AnimationCurve punchTimeScaleCurve;
+    [SerializeField] AnimationCurve punchFOVAnimCurve;
+    [SerializeField] float screenShakeDelay;
 
     [Header("Cancel State Tweakables")]
     [SerializeField] float cancelTimeBeforeIdle;
+
+    [Space]
+    [SerializeField] UnityEvent punchEvent;
 
     private float punchChargeTimer = 0;
     private float punchTimer = 0;
     private float cancelTimerBeforeIdle = 0;
     private bool punchPerformed = false;
+    private float defaultFOV = 70;
+    private Coroutine punchFeedbackCoroutine;
 
 
-    public enum PunchIntensity
-    {
-        None,
-        Weak,
-        Strong
-    }
     public enum PunchState
     {
         Idle,
@@ -63,7 +61,11 @@ public class PunchEmitter : MonoBehaviour
         Cancel
     }
     private PunchState myState = PunchState.Idle;
-    private PunchIntensity currentPunchIntensity = PunchIntensity.None;
+
+    private void Start()
+    {
+        defaultFOV = cinemachineCam.Lens.FieldOfView;
+    }
 
     private void Update()
     {
@@ -73,7 +75,12 @@ public class PunchEmitter : MonoBehaviour
     //UPDATE STATES-----------------
     private void IdleUpdate()
     {
-        juicyPostProcessVolume.weight = Mathf.Lerp(juicyPostProcessVolume.weight, 0.001f, juicyPostProcessVolumeOutLerpSpeed * Time.deltaTime);
+        //post process lerp to null
+        if (juicyPostProcessVolume != null)
+            juicyPostProcessVolume.weight = Mathf.Lerp(juicyPostProcessVolume.weight, 0.001f, juicyPostProcessVolumeOutLerpSpeed * Time.deltaTime);
+
+        cinemachineCam.Lens.FieldOfView = Mathf.Lerp(cinemachineCam.Lens.FieldOfView, defaultFOV, punchBackToIdleFOVLerpSpeed);
+
         if (punchInputRef.action.IsPressed())
         {
             SwitchState(PunchState.Charge);
@@ -84,15 +91,16 @@ public class PunchEmitter : MonoBehaviour
         //CHARGING
         if (punchInputRef.action.ReadValue<float>() >0f)
         {
-            juicyPostProcessVolume.weight = Mathf.Lerp(juicyPostProcessVolume.weight, 1f, juicyPostProcessVolumeInLerpSpeed * Time.deltaTime);
+            //post process lerp to 1
+            if (juicyPostProcessVolume != null)
+                juicyPostProcessVolume.weight = Mathf.Lerp(juicyPostProcessVolume.weight, 1f, juicyPostProcessVolumeInLerpSpeed * Time.deltaTime);
+
+            cinemachineCam.Lens.FieldOfView = Mathf.Lerp(cinemachineCam.Lens.FieldOfView, punchChargeMaxFOV, punchChargeFOVLerpSpeed);
+
             punchChargeTimer += Time.deltaTime;
-            if (punchChargeTimer > strongPunchChargeTime && currentPunchIntensity != PunchIntensity.Strong)
-                currentPunchIntensity = PunchIntensity.Strong;
-            else if(punchChargeTimer > weakPunchChargeTime && currentPunchIntensity==PunchIntensity.None)
-                currentPunchIntensity=PunchIntensity.Weak;
         }
         //BUTTON RELEASE WITH ENOUGH CHARGE -> PUNCH
-        else if (currentPunchIntensity != PunchIntensity.None)
+        else if (punchChargeTimer > punchChargeTime)
         {
             SwitchState(PunchState.Punch);
         }
@@ -104,29 +112,19 @@ public class PunchEmitter : MonoBehaviour
     }
     private void PunchUpdate()
     {
-        juicyPostProcessVolume.weight = Mathf.Lerp(juicyPostProcessVolume.weight, 0.001f, juicyPostProcessVolumeOutLerpSpeed * Time.deltaTime);
+        //post process lerp to null
+        if(juicyPostProcessVolume != null)
+            juicyPostProcessVolume.weight = Mathf.Lerp(juicyPostProcessVolume.weight, 0.001f, juicyPostProcessVolumeOutLerpSpeed * Time.deltaTime);
+
         punchTimer += Time.deltaTime;
-        if(currentPunchIntensity == PunchIntensity.Weak)
+
+        if (punchTimer > strongPunchTimeBeforeIdle)
         {
-            if(punchTimer > weakPunchTimeBeforeIdle)
-            {
-                SwitchState(PunchState.Idle);
-            }
-            else if (punchTimer > weakPunchTimeBeforeHit && !punchPerformed)
-            {
-                Punch();
-            }
+            SwitchState(PunchState.Idle);
         }
-        else if(currentPunchIntensity == PunchIntensity.Strong)
+        else if(punchTimer> strongPunchTimeBeforeHit && !punchPerformed)
         {
-            if (punchTimer > strongPunchTimeBeforeIdle)
-            {
-                SwitchState(PunchState.Idle);
-            }
-            else if(punchTimer> strongPunchTimeBeforeHit && !punchPerformed)
-            {
-                Punch();
-            }
+            Punch();
         }
     }
     private void CancelUpdate()
@@ -148,6 +146,7 @@ public class PunchEmitter : MonoBehaviour
             case PunchState.Charge:
                 break;
             case PunchState.Punch:
+                StopCoroutine(punchFeedbackCoroutine);
                 break;
             case PunchState.Cancel:
                 break;
@@ -159,16 +158,15 @@ public class PunchEmitter : MonoBehaviour
         {
             case PunchState.Idle:
                 print("Enter State Idle");
-                currentPunchIntensity = PunchIntensity.None;
                 break;
             case PunchState.Charge:
                 punchChargeTimer = 0;
                 print("Enter State Charge");
                 break;
             case PunchState.Punch:
+                punchFeedbackCoroutine = StartCoroutine(StrongPunchFeedbackCoroutine());
                 punchTimer = 0;
                 punchPerformed = false;
-                print("current punch intensity: " + currentPunchIntensity);
                 break;
             case PunchState.Cancel:
                 cancelTimeBeforeIdle = 0;
@@ -204,67 +202,48 @@ public class PunchEmitter : MonoBehaviour
     //OTHER FUNCTIONS-----------------
     private void Punch()
     {
+        punchEvent.Invoke();
+
         punchPerformed = true;
         Vector3 _punchIntensityAndForce;
         Vector3 _punchPositionOffset;
-        
-        //Setting values to differ depending on intensity
-        if(currentPunchIntensity == PunchIntensity.Weak)
-        {
-            weakPunchCameraShake.GenerateImpulse();
-            Vector3 punchDirection = weakPunchDirection.x * Camera.main.transform.right + weakPunchDirection.y * Camera.main.transform.up + weakPunchDirection.z * Camera.main.transform.forward;
-            _punchIntensityAndForce = punchDirection.normalized * weakPunchForce;
-            _punchPositionOffset = weakPunchOffset.x * Camera.main.transform.right + weakPunchOffset.y * Camera.main.transform.up + weakPunchOffset.z * Camera.main.transform.forward;
-        }
-        else
-        {
-            strongPunchCameraShake.GenerateImpulse();
-            Vector3 punchDirection = strongPunchDirection.x * Camera.main.transform.right + strongPunchDirection.y * Camera.main.transform.up + strongPunchDirection.z * Camera.main.transform.forward;
-            _punchIntensityAndForce = punchDirection.normalized * strongPunchForce;
-            _punchPositionOffset = strongPunchOffset.x * Camera.main.transform.right + strongPunchOffset.y * Camera.main.transform.up + strongPunchOffset.z * Camera.main.transform.forward;
-        }
+        Vector3 punchDirection = strongPunchDirection.x * Camera.main.transform.right + strongPunchDirection.y * Camera.main.transform.up + strongPunchDirection.z * Camera.main.transform.forward;
+        _punchIntensityAndForce = punchDirection.normalized * strongPunchForce;
+        _punchPositionOffset = strongPunchOffset.x * Camera.main.transform.right + strongPunchOffset.y * Camera.main.transform.up + strongPunchOffset.z * Camera.main.transform.forward;
 
         //Apply Force + tell entities they have been punched
         for(int i=0; i<targetsClose.punchReceivers.Count; i++)
         {
             targetsClose.punchReceivers[i].myRb.AddForceAtPosition(_punchIntensityAndForce, targetsClose.punchReceivers[i].transform.position+targetsClose.punchReceivers[i].myRb.centerOfMass+ _punchPositionOffset);
-            targetsClose.punchReceivers[i].OnPunchReceived(currentPunchIntensity);
+            targetsClose.punchReceivers[i].OnPunchReceived();
         }
 
-
         //lighter push on far targets
-        if (currentPunchIntensity == PunchIntensity.Strong)
+        for (int i = 0; i < targetsFar.punchReceivers.Count; i++)
         {
-            for (int i = 0; i < targetsFar.punchReceivers.Count; i++)
+            if (!targetsClose.punchReceivers.Contains(targetsFar.punchReceivers[i]))
             {
-                if (!targetsClose.punchReceivers.Contains(targetsFar.punchReceivers[i]))
-                {
-                    targetsFar.punchReceivers[i].myRb.AddForce(farTargetsForce * (targetsFar.punchReceivers[i].transform.position - transform.position).normalized);
-                }
+                targetsFar.punchReceivers[i].myRb.AddForce(farTargetsForce * (targetsFar.punchReceivers[i].transform.position - transform.position).normalized);
             }
         }
     }
 
-    private IEnumerator WeakPunchFeedback()
-    {
-        float weakPunchTimer = 0;
-        weakPunchCameraShake.GenerateImpulse();
-
-        while(weakPunchTimer < weakPunchTimeBeforeIdle)
-        {
-            weakPunchTimer += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        yield return null;
-    }
-    private IEnumerator StrongPunchFeedback()
+    private IEnumerator StrongPunchFeedbackCoroutine()
     {
         float strongPunchTimer = 0;
-        strongPunchCameraShake.GenerateImpulse();
+        bool screenShakeDone = false;
 
-        while (strongPunchTimer < weakPunchTimeBeforeIdle)
+        while (strongPunchTimer < 1)
         {
-            strongPunchTimer += Time.deltaTime;
+            strongPunchTimer += Time.deltaTime/strongPunchTimeBeforeIdle;
+            //Time.timeScale = punchTimeScaleCurve.Evaluate(strongPunchTimer);
+            if (!screenShakeDone && strongPunchTimer * strongPunchTimeBeforeIdle >= screenShakeDelay)
+            {
+                strongPunchCameraShake.GenerateImpulse();
+                screenShakeDone = true;
+            }
+
+            cinemachineCam.Lens.FieldOfView = Mathf.Lerp(defaultFOV, punchChargeMaxFOV, punchFOVAnimCurve.Evaluate(strongPunchTimer));
             yield return new WaitForEndOfFrame();
         }
         yield return null;

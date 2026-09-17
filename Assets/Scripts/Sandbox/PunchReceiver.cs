@@ -9,7 +9,7 @@ public class PunchReceiver : MonoBehaviour
         myRb = GetComponent<Rigidbody>();
     }
 
-    public void OnPunchReceived(PunchEmitter.PunchIntensity _punchIntensity)
+    public void OnPunchReceived()
     {
 
     }
