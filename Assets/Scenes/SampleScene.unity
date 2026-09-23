@@ -145,8 +145,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 27332811}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.25, z: 1.88}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.25, z: 1.8799999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -520,6 +520,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &188354784
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,6 +656,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 198795032}
+  punchReceivedPS: {fileID: 1971697515171926002, guid: efa5e021a1dbfe1409f81afc43313bba, type: 3}
+  punchReceivedAnim: {fileID: 1074950230}
+  shouldSpawnPS: 1
+  shouldAnim: 1
 --- !u!1 &228821488
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,6 +814,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &287483153
 GameObject:
   m_ObjectHideFlags: 0
@@ -1359,6 +1371,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1718,6 +1734,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &547020412
 GameObject:
   m_ObjectHideFlags: 0
@@ -1904,6 +1924,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &590341750
 GameObject:
   m_ObjectHideFlags: 0
@@ -2058,6 +2082,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &606103618
 GameObject:
   m_ObjectHideFlags: 0
@@ -2297,6 +2325,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &693115017
 GameObject:
   m_ObjectHideFlags: 0
@@ -2451,6 +2483,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &708452767
 GameObject:
   m_ObjectHideFlags: 0
@@ -2605,6 +2641,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &752067440
 GameObject:
   m_ObjectHideFlags: 0
@@ -2844,6 +2884,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -2949,39 +2993,49 @@ MonoBehaviour:
   targetsFar: {fileID: 27332813}
   strongPunchCameraShake: {fileID: 752067442}
   cinemachineCam: {fileID: 1428954896}
-  juicyPostProcessVolume: {fileID: 0}
+  rightPunchRend: {fileID: 1836319388}
+  juicyPostProcessVolume: {fileID: 1970830519}
   juicyPostProcessVolumeInLerpSpeed: 0.7
   juicyPostProcessVolumeOutLerpSpeed: 2.8
   punchChargeTime: 0.5
-  punchChargeMaxFOV: 70
+  punchChargeMaxFOV: 85
   punchChargeFOVLerpSpeed: 0.02
   punchBackToIdleFOVLerpSpeed: 0.2
   strongPunchTimeBeforeIdle: 1.2
   strongPunchTimeBeforeHit: 0.15
-  strongPunchDirection: {x: 0, y: 0.5, z: 1}
-  strongPunchForce: 300
-  strongPunchOffset: {x: 0, y: 0, z: 0}
-  farTargetsForce: 0
+  strongPunchDirection: {x: 0, y: 0.4, z: 1}
+  strongPunchForce: 1200
+  strongPunchOffset: {x: 0, y: 0.1, z: 0}
+  farTargetsForce: 300
   punchTimeScaleCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: -1.684721
+      outSlope: -1.684721
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.35971612
+      value: 0.39397871
+      inSlope: -0.003658707
+      outSlope: -0.003658707
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 0.94648844
+      outSlope: 0.94648844
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -3019,7 +3073,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  screenShakeDelay: 2
+  screenShakeDelay: 0.15
   cancelTimeBeforeIdle: 0.25
   punchEvent:
     m_PersistentCalls:
@@ -3256,6 +3310,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &978298984
 GameObject:
   m_ObjectHideFlags: 0
@@ -3572,6 +3630,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &1004371219
 GameObject:
   m_ObjectHideFlags: 0
@@ -3760,6 +3822,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &1074950228
 GameObject:
   m_ObjectHideFlags: 0
@@ -3769,6 +3835,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1074950229}
+  - component: {fileID: 1074950230}
   m_Layer: 0
   m_Name: Visuals
   m_TagString: Untagged
@@ -3794,6 +3861,28 @@ Transform:
   - {fileID: 1901085470}
   m_Father: {fileID: 198795031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1074950230
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074950228}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 96d5a418294941b4cab7d4b308247bdc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1103017230
 GameObject:
   m_ObjectHideFlags: 0
@@ -3980,6 +4069,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &1245982466
 GameObject:
   m_ObjectHideFlags: 0
@@ -4134,6 +4227,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &1264790556
 GameObject:
   m_ObjectHideFlags: 0
@@ -4390,6 +4487,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &1387956159
 GameObject:
   m_ObjectHideFlags: 0
@@ -4500,9 +4601,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1815575712}
   - {fileID: 1492232203}
   - {fileID: 27332812}
-  - {fileID: 1815575712}
   m_Father: {fileID: 1103017231}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1428954896
@@ -4598,8 +4699,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1492232202}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.25, z: 1.88}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.25, z: 1.8799999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4793,6 +4894,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &1537396222
 GameObject:
   m_ObjectHideFlags: 0
@@ -4940,7 +5045,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6c3534c6813b277429c4bb6bedd63a77, type: 2}
+  - {fileID: 2100000, guid: fbd2a183f85bbe441b5bb7ffe67a13a8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5109,7 +5214,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 1
   blendDistance: 0
-  weight: 0.01
+  weight: 0.498
   sharedProfile: {fileID: 11400000, guid: 3d92cd1d373396a48855927fc8988bdd, type: 2}
 --- !u!1 &1985948284
 GameObject:
@@ -5379,6 +5484,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!1 &2729546676690051095
 GameObject:
   m_ObjectHideFlags: 0
@@ -5448,6 +5557,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PunchReceiver
   myRb: {fileID: 0}
+  punchReceivedPS: {fileID: 0}
+  punchReceivedAnim: {fileID: 0}
+  shouldSpawnPS: 0
+  shouldAnim: 0
 --- !u!65 &7124593956529503870
 BoxCollider:
   m_ObjectHideFlags: 0

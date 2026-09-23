@@ -15,6 +15,7 @@ public class PunchEmitter : MonoBehaviour
     [SerializeField] TargetsGathering targetsFar;
     [SerializeField] CinemachineImpulseSource strongPunchCameraShake;
     [SerializeField] CinemachineCamera cinemachineCam;
+    [SerializeField] Renderer rightPunchRend;
 
     [Header("Soft References")]
     [SerializeField] Volume juicyPostProcessVolume;
@@ -98,6 +99,7 @@ public class PunchEmitter : MonoBehaviour
             cinemachineCam.Lens.FieldOfView = Mathf.Lerp(cinemachineCam.Lens.FieldOfView, punchChargeMaxFOV, punchChargeFOVLerpSpeed);
 
             punchChargeTimer += Time.deltaTime;
+            rightPunchRend.material.SetFloat("_ChargeAmount", punchChargeTimer / punchChargeTime);
         }
         //BUTTON RELEASE WITH ENOUGH CHARGE -> PUNCH
         else if (punchChargeTimer > punchChargeTime)
@@ -158,6 +160,7 @@ public class PunchEmitter : MonoBehaviour
         {
             case PunchState.Idle:
                 print("Enter State Idle");
+                rightPunchRend.material.SetFloat("_ChargeAmount", 0f);
                 break;
             case PunchState.Charge:
                 punchChargeTimer = 0;
@@ -170,6 +173,7 @@ public class PunchEmitter : MonoBehaviour
                 break;
             case PunchState.Cancel:
                 cancelTimeBeforeIdle = 0;
+                rightPunchRend.material.SetFloat("_ChargeAmount", 0f);
                 break;
         }
     }
@@ -204,6 +208,7 @@ public class PunchEmitter : MonoBehaviour
     {
         punchEvent.Invoke();
 
+        rightPunchRend.material.SetFloat("_ChargeAmount", 0);
         punchPerformed = true;
         Vector3 _punchIntensityAndForce;
         Vector3 _punchPositionOffset;
